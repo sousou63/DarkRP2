@@ -1,9 +1,10 @@
 using Sandbox.UI;
 
-public sealed class MoneyPrinter : Component, Component.IPressable, IPhysgunEvent
+public sealed class MoneyPrinter : Component, Component.IPressable, IPhysgunEvent, Component.IDamageable
 {
 	const string BaseMaterialPath = "materials/printer/base/base.vmat";
 	const string FanMaterialPath = "materials/printer/fan/fan.vmat";
+	const string DestroyEffectPrefabPath = "entities/particles/fx_sparks.prefab";
 	static readonly Dictionary<string, BBox> CachedBounds = new();
 
 	List<TextRenderer> Labels = new();
@@ -11,6 +12,13 @@ public sealed class MoneyPrinter : Component, Component.IPressable, IPhysgunEven
 	ModelRenderer FanRenderer = default;
 	GameObject FanObject = default;
 	TimeSince _timeSincePrinted;
+	bool _destroyedByDamage;
+
+	[Property, Group( "Damage" ), Range( 1, 500 ), Sync( SyncFlags.FromHost )]
+	public float Health { get; set; } = 100.0f;
+
+	[Property, Group( "Damage" ), Range( 1, 500 )]
+	public float MaxHealth { get; set; } = 100.0f;
 
 	[Property, Sync( SyncFlags.FromHost ), Change( nameof( OnDefinitionPathChanged ) )]
 	public string DefinitionPath { get; set; } = MoneyPrinterDefinition.DefaultResourcePath;
@@ -24,8 +32,8 @@ public sealed class MoneyPrinter : Component, Component.IPressable, IPhysgunEven
 			return null;
 
 		var description = StoredMoney > 0
-			? $"{definition.Title} - ${StoredMoney:n0}"
-			: $"{definition.Title} - Empty";
+			? $"{definition.Title} - ${StoredMoney:n0} - {GetHealthPercent():0}%"
+			: $"{definition.Title} - Empty - {GetHealthPercent():0}%";
 
 		return new IPressable.Tooltip( "Collect", "$", description );
 	}
@@ -107,6 +115,45 @@ public sealed class MoneyPrinter : Component, Component.IPressable, IPhysgunEven
 		PlayCollectEffects();
 	}
 
+	void IDamageable.OnDamage( in DamageInfo damage )
+	{
+		if ( IsProxy || _destroyedByDamage || GameObject.IsDestroyed )
+			return;
+
+		if ( damage.Damage <= 0.0f )
+			return;
+
+		Health = MathF.Max( 0.0f, Health - damage.Damage );
+		if ( Health > 0.0f )
+			return;
+
+		DestroyFromDamage( damage );
+	}
+
+	void DestroyFromDamage( in DamageInfo damage )
+	{
+		if ( _destroyedByDamage )
+			return;
+
+		_destroyedByDamage = true;
+		var ownerConnection = GameObject.GetComponent<Ownable>()?.Owner;
+		var attacker = damage.Attacker?.Root.GetComponent<Player>();
+
+		if ( ownerConnection is not null )
+		{
+			var attackerName = attacker.IsValid() ? attacker.DisplayName : "Someone";
+			Notices.SendNotice( ownerConnection, "warning", Color.Orange, $"{attackerName} destroyed your printer.", 3 );
+		}
+
+		if ( attacker.IsValid() && attacker.Network.Owner != ownerConnection )
+		{
+			Notices.SendNotice( attacker.Network.Owner, "warning", Color.Green, "Printer destroyed.", 2 );
+		}
+
+		PlayDestroyEffects( WorldPosition );
+		GameObject.Destroy();
+	}
+
 	[Rpc.Broadcast]
 	void PlayCollectEffects()
 	{
@@ -114,6 +161,29 @@ public sealed class MoneyPrinter : Component, Component.IPressable, IPhysgunEven
 			return;
 
 		Sound.Play( "sounds/ui/ui.spawn.sound", WorldPosition );
+	}
+
+	[Rpc.Broadcast]
+	static async void PlayDestroyEffects( Vector3 position )
+	{
+		if ( Application.IsDedicatedServer )
+			return;
+
+		Sound.Play( "sounds/ui/ui.undo.sound", position );
+
+		var effectPrefab = GameObject.GetPrefab( DestroyEffectPrefabPath );
+		if ( effectPrefab is null )
+			return;
+
+		var effect = effectPrefab.Clone( new CloneConfig
+		{
+			Transform = new Transform( position, Rotation.Identity ),
+			StartEnabled = true
+		} );
+
+		effect.Flags |= GameObjectFlags.NotSaved | GameObjectFlags.NotNetworked;
+		await global::System.Threading.Tasks.Task.Delay( 2000 );
+		effect?.Destroy();
 	}
 
 	void CacheComponents()
@@ -148,6 +218,14 @@ public sealed class MoneyPrinter : Component, Component.IPressable, IPhysgunEven
 	MoneyPrinterDefinition GetDefinition()
 	{
 		return MoneyPrinterDefinition.Get( DefinitionPath );
+	}
+
+	float GetHealthPercent()
+	{
+		if ( MaxHealth <= 0.0f )
+			return 0.0f;
+
+		return (Health / MaxHealth * 100.0f).Clamp( 0.0f, 100.0f );
 	}
 
 	void RefreshLabels()
@@ -221,6 +299,7 @@ public sealed class MoneyPrinter : Component, Component.IPressable, IPhysgunEven
 
 		printer.DefinitionPath = definition.ResourcePath;
 		printer.StoredMoney = 0;
+		printer.Health = printer.MaxHealth;
 		printer.CacheComponents();
 		printer.ApplyDefinition();
 		printer.RefreshLabels();
