@@ -34,6 +34,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 	void Component.INetworkListener.OnDisconnected( Connection channel )
 	{
 		Player.FindForConnection( channel )?.SaveRoleplayData();
+		CleanupSystem.CleanupPlayer( channel );
 
 		var pd = PlayerData.For( channel );
 		if ( pd is not null )
