@@ -1,0 +1,24 @@
+// Temporary fallback for v_physgun.vmdl source compilation.
+
+Layer0
+{
+	shader "shaders/complex.shader"
+
+	//---- Color ----
+	g_vColorTint "[0.020000 0.060000 0.100000 0.000000]"
+	TextureColor "materials/default/default_color.tga"
+
+	//---- Fog ----
+	g_bFogEnabled "1"
+
+	//---- Metalness ----
+	g_flMetalness "0.000"
+	TextureMetalness "materials/default/default_metal.tga"
+
+	//---- Normal ----
+	TextureNormal "materials/default/default_normal.tga"
+
+	//---- Roughness ----
+	g_flRoughnessScaleFactor "0.800"
+	TextureRoughness "materials/default/default_rough.tga"
+}

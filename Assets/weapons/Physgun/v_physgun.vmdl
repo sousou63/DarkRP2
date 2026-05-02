@@ -74,22 +74,12 @@
 			{
 				_class = "AnimConstraintList"
 				children = 
-				[
-					{
-						_class = "Prefab"
-						target_file = "models/first_person/prefabs/first_person_arms_animconstraintlist.vmdl_prefab"
-					},
-				]
+				[  ]
 			},
 			{
 				_class = "IKData"
 				children = 
-				[
-					{
-						_class = "Prefab"
-						target_file = "models/first_person/prefabs/first_person_arms_ikdata.vmdl_prefab"
-					},
-				]
+				[  ]
 			},
 			{
 				_class = "BoneMarkupList"
@@ -109,10 +99,6 @@
 				_class = "WeightListList"
 				children = 
 				[
-					{
-						_class = "Prefab"
-						target_file = "models/first_person/prefabs/first_person_arms_weightlistlist.vmdl_prefab"
-					},
 					{
 						_class = "WeightList"
 						name = "Stylus_Only"
@@ -141,14 +127,6 @@
 				_class = "AnimationList"
 				children = 
 				[
-					{
-						_class = "Prefab"
-						target_file = "models/first_person/prefabs/first_person_arms_animationlist_adjustmentlayers.vmdl_prefab"
-					},
-					{
-						_class = "Prefab"
-						target_file = "models/first_person/prefabs/first_person_arms_animationlist_shared.vmdl_prefab"
-					},
 					{
 						_class = "AnimBindPose"
 						name = "bindPose_internal"

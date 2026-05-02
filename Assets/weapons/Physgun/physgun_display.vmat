@@ -1,0 +1,33 @@
+// Temporary fallback for v_physgun.vmdl source compilation.
+
+Layer0
+{
+	shader "shaders/complex.shader"
+
+	//---- PBR ----
+	F_SELF_ILLUM 1
+
+	//---- Color ----
+	TextureColor "weapons/physgun/v_physgun_display_color.png"
+
+	//---- Fog ----
+	g_bFogEnabled "1"
+
+	//---- Metalness ----
+	g_flMetalness "0.000"
+	TextureMetalness "materials/default/default_metal.tga"
+
+	//---- Normal ----
+	TextureNormal "weapons/physgun/v_physgun_display_normal.png"
+
+	//---- Roughness ----
+	g_flRoughnessScaleFactor "1.000"
+	TextureRoughness "weapons/physgun/v_physgun_display_rough.png"
+
+	//---- Self Illum ----
+	g_flSelfIllumAlbedoFactor "1.000"
+	g_flSelfIllumBrightness "2.500"
+	g_flSelfIllumScale "1.000"
+	g_vSelfIllumTint "[0.384314 0.721569 1.000000 0.000000]"
+	TextureSelfIllumMask "[1.000000 1.000000 1.000000 0.000000]"
+}
