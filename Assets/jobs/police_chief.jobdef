@@ -5,6 +5,7 @@
   "AccentColor": "0.251,0.651,0.9412,1",
   "Salary": 90,
   "MaxPlayers": 1,
+  "RequiresVote": true,
   "Command": "/chief",
   "Order": 20,
   "StartingItems": [

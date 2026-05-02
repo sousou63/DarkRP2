@@ -194,6 +194,37 @@
           "Children": []
         },
         {
+          "__guid": "d1e8ac2c-47d8-4cb6-96e9-76f785f52e98",
+          "__version": 2,
+          "Flags": 0,
+          "Name": "Job Vote Panel",
+          "Position": "0,0,0",
+          "Rotation": "0,0,0,1",
+          "Scale": "1,1,1",
+          "Tags": "",
+          "Enabled": true,
+          "NetworkMode": 2,
+          "NetworkFlags": 0,
+          "NetworkOrphaned": 0,
+          "NetworkTransmit": true,
+          "OwnerTransfer": 1,
+          "Components": [
+            {
+              "__type": "Sandbox.JobVotePanel",
+              "__guid": "6f20329f-951c-44cc-b261-ef0c18e04170",
+              "__enabled": true,
+              "Flags": 0,
+              "OnComponentDestroy": null,
+              "OnComponentDisabled": null,
+              "OnComponentEnabled": null,
+              "OnComponentFixedUpdate": null,
+              "OnComponentStart": null,
+              "OnComponentUpdate": null
+            }
+          ],
+          "Children": []
+        },
+        {
           "__guid": "305ce650-6442-44cf-b1b5-aa441f73705b",
           "__version": 2,
           "Flags": 0,

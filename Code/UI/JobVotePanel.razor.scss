@@ -1,0 +1,167 @@
+@import "/UI/Theme.scss";
+
+JobVotePanel
+{
+	position: absolute;
+	top: $deadzone-y;
+	right: $deadzone-x;
+	width: 320px;
+	font-family: $body-font;
+	pointer-events: none;
+	z-index: 300;
+
+	&.context-menu-open
+	{
+		z-index: 1200;
+	}
+
+	.job-vote-card
+	{
+		width: 100%;
+		flex-direction: column;
+		align-items: stretch;
+		gap: 10px;
+		padding: 14px;
+		background-color: rgba( 6, 13, 22, 0.82 );
+		border: 1px solid rgba( 255, 255, 255, 0.08 );
+		box-shadow: 0 8px 24px rgba( 0, 0, 0, 0.25 );
+		pointer-events: none;
+	}
+
+	&.context-menu-open .job-vote-card
+	{
+		pointer-events: all;
+	}
+
+	.vote-header
+	{
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+	}
+
+	.vote-title
+	{
+		font-family: $title-font;
+		font-size: 13px;
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: $color-accent;
+	}
+
+	.vote-timer
+	{
+		min-width: 42px;
+		padding: 4px 7px;
+		border-radius: 4px;
+		font-size: 13px;
+		font-weight: 800;
+		text-align: center;
+		color: white;
+		background-color: rgba( $color-accent, 0.22 );
+	}
+
+	.vote-question
+	{
+		font-size: 15px;
+		font-weight: 700;
+		line-height: 19px;
+		color: $hud-text;
+		white-space: normal;
+	}
+
+	.vote-actions
+	{
+		flex-direction: row;
+		gap: 8px;
+	}
+
+	.vote-button
+	{
+		flex: 1;
+		min-height: 44px;
+		padding: 10px 12px;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		border-radius: 4px;
+		color: white;
+		transition: background-color 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
+
+		label,
+		.title,
+		IconPanel,
+		.icon
+		{
+			color: white;
+			font-weight: 800;
+		}
+
+		IconPanel,
+		.icon
+		{
+			width: 18px;
+			height: 18px;
+			min-width: 18px;
+			align-items: center;
+			justify-content: center;
+			font-size: 18px;
+			line-height: 18px;
+		}
+
+		label,
+		.title
+		{
+			align-items: center;
+			line-height: 18px;
+		}
+
+		&.yes
+		{
+			background-color: rgba( #2dbf6a, 0.24 );
+			border: 1px solid rgba( #42d67d, 0.32 );
+		}
+
+		&.no
+		{
+			background-color: rgba( #d9463f, 0.22 );
+			border: 1px solid rgba( #ff7066, 0.32 );
+		}
+
+		&.yes:hover
+		{
+			background-color: rgba( #2dbf6a, 0.46 );
+			border-color: rgba( #72f0a4, 0.72 );
+			transform: translateY( -1px );
+			sound-in: ui.hover;
+		}
+
+		&.no:hover
+		{
+			background-color: rgba( #d9463f, 0.44 );
+			border-color: rgba( #ff9088, 0.72 );
+			transform: translateY( -1px );
+			sound-in: ui.hover;
+		}
+
+		&:active
+		{
+			transform: translateY( 0 );
+			sound-in: ui.select;
+		}
+
+		&.selected
+		{
+			border-color: white;
+		}
+
+		&.disabled
+		{
+			pointer-events: none;
+			opacity: 0.45;
+		}
+	}
+}

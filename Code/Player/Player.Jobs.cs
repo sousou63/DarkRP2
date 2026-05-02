@@ -105,7 +105,31 @@ public sealed partial class Player
 			return;
 		}
 
+		if ( definition.RequiresVote )
+		{
+			var manager = JobVoteManager.Current ?? JobVoteManager.Ensure( Scene );
+			string voteReason = null;
+			if ( manager is null || !manager.TryStartVote( this, definition, out voteReason ) )
+			{
+				Notices.SendNotice( Network.Owner, "block", Color.Red, voteReason ?? "Unable to start job vote.", 3 );
+				return;
+			}
+
+			_timeSinceJobChange = 0;
+			Notices.SendNotice( Network.Owner, "how_to_vote", Color.Cyan, $"Vote started for {definition.Title}.", 3 );
+			return;
+		}
+
 		SetJobDefinition( definition );
+		_timeSinceJobChange = 0;
+		_ = ApplyJobDefinitionAsync( definition, true );
+	}
+
+	public void ApplyVotedJobDefinition( JobDefinition definition )
+	{
+		if ( !Networking.IsHost || definition is null )
+			return;
+
 		_timeSinceJobChange = 0;
 		_ = ApplyJobDefinitionAsync( definition, true );
 	}

@@ -214,6 +214,10 @@
                                                 <div class="job-meta">
                                                     <label class="job-meta-item">Salary: @FormatCurrency( job.Salary )</label>
                                                     <label class="job-meta-item">Slots: @GetJobSlotsText( job )</label>
+                                                    @if ( job.RequiresVote )
+                                                    {
+                                                        <label class="job-meta-item">Vote required</label>
+                                                    }
 
                                                     @if ( isCurrentJob )
                                                     {
@@ -225,7 +229,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <Button Text="Choose"
+                                                        <Button Text="@GetJobSelectText( job )"
                                                                 class="menu-action primary job-select"
                                                                 @onclick:stopPropagation="true"
                                                                 @onclick="@(() => SelectJob( job ))" />
@@ -703,6 +707,7 @@
     }
 
     string GetJobSlotsText( JobDefinition job ) => JobManager.FormatSlots( job );
+    string GetJobSelectText( JobDefinition job ) => job?.RequiresVote == true ? "Start Vote" : "Choose";
 
     string GetJobStartingGearText( JobDefinition job )
     {

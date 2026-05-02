@@ -1,0 +1,108 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@namespace Sandbox
+
+@if ( !ShouldShow )
+	return;
+
+<root>
+	<div class="job-vote-card hud-panel">
+		<div class="vote-header">
+			<label class="vote-title">Job Vote</label>
+			<label class="vote-timer">@SecondsRemainingText</label>
+		</div>
+
+		<label class="vote-question">@VoteQuestion</label>
+
+		<div class="vote-actions">
+			<Button Text="@YesButtonText"
+			        Icon="check_circle"
+			        class="@YesButtonClass"
+			        Disabled="@(!CanVote)"
+			        @onclick="@(() => SubmitVote( true ))" />
+			<Button Text="@NoButtonText"
+			        Icon="cancel"
+			        class="@NoButtonClass"
+			        Disabled="@(!CanVote)"
+			        @onclick="@(() => SubmitVote( false ))" />
+		</div>
+	</div>
+</root>
+
+@code
+{
+	JobVoteManager Manager => JobVoteManager.Current;
+	Player LocalPlayer => Player.FindLocalPlayer();
+
+	int _seenRevision = -1;
+	bool? _localVote;
+
+	bool ShouldShow => Manager.IsValid()
+		&& Manager.IsVoteActive
+		&& LocalPlayer.IsValid()
+		&& !LocalPlayer.WantsHideHud;
+
+	bool HasVoted => _localVote.HasValue;
+	bool IsContextMenuOpen => (Game.ActiveScene.Get<SpawnMenuHost>()?.Panel?.HasClass( "open" ) ?? false)
+		&& SpawnMenuHost.GetActiveMode() is ContextMenuHost;
+	bool CanVote => IsContextMenuOpen && !HasVoted;
+	string YesButtonClass => _localVote == true ? "vote-button yes selected" : "vote-button yes";
+	string NoButtonClass => _localVote == false ? "vote-button no selected" : "vote-button no";
+	string YesButtonText => $"Yes {Manager?.YesVotes ?? 0}";
+	string NoButtonText => $"No {Manager?.NoVotes ?? 0}";
+
+	string SecondsRemainingText
+	{
+		get
+		{
+			var seconds = Math.Max( 0, (int)MathF.Ceiling( Manager?.SecondsRemaining ?? 0.0f ) );
+			return $"{seconds}s";
+		}
+	}
+
+	string VoteQuestion => $"Allow {Manager?.CandidateName ?? "Unknown"} to become {Manager?.JobTitle ?? "this job"}?";
+
+	void SubmitVote( bool support )
+	{
+		if ( HasVoted || !Manager.IsValid() || !Manager.IsVoteActive )
+			return;
+
+		_localVote = support;
+		Manager.RequestVote( support );
+	}
+
+	protected override void OnUpdate()
+	{
+		Panel.SetClass( "context-menu-open", IsContextMenuOpen );
+
+		if ( !Manager.IsValid() )
+			return;
+
+		if ( _seenRevision != Manager.Revision )
+		{
+			_seenRevision = Manager.Revision;
+
+			if ( !Manager.IsVoteActive )
+			{
+				_localVote = null;
+			}
+		}
+	}
+
+	protected override int BuildHash()
+	{
+		if ( !ShouldShow )
+			return 0;
+
+		return HashCode.Combine(
+			Manager.Revision,
+			Manager.CandidateName,
+			Manager.JobTitle,
+			Manager.YesVotes,
+			Manager.NoVotes,
+			(int)MathF.Ceiling( Manager.SecondsRemaining ),
+			_localVote,
+			IsContextMenuOpen );
+	}
+}

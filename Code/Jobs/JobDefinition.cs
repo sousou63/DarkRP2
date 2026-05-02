@@ -22,6 +22,9 @@ public sealed class JobDefinition : GameResource, IDefinitionResource
 	public int MaxPlayers { get; set; }
 
 	[Property]
+	public bool RequiresVote { get; set; }
+
+	[Property]
 	public string Command { get; set; }
 
 	[Property]

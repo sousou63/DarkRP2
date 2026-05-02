@@ -14,6 +14,7 @@ public sealed partial class GameManager : GameObjectSystem<GameManager>, Compone
 		}
 
 		CityLawManager.Ensure( Scene );
+		JobVoteManager.Ensure( Scene );
 	}
 
 	void Component.INetworkListener.OnActive( Connection channel )
