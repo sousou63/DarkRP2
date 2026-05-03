@@ -42,7 +42,7 @@ public sealed partial class GameManager
 
 		var eyes = player.EyeTransform;
 
-		var trace = Game.SceneTrace.Ray( eyes.Position, eyes.Position + eyes.Forward * 200 )
+		var trace = Game.SceneTrace.Ray( eyes.Position, eyes.Position + eyes.Forward * 2048 )
 			.IgnoreGameObject( player.GameObject )
 			.WithoutTags( "player" )
 			.Run();
@@ -120,6 +120,15 @@ public sealed partial class GameManager
 
 		if ( spawnData.Cancelled )
 			return;
+
+		// If the prefab is a weapon, pick it up directly instead of spawning into the world
+		var prefab = spawner.Prefab;
+		if ( prefab is not null && prefab.GetComponent<BaseCarryable>( true ) is not null )
+		{
+			var inventory = player.GetComponent<PlayerInventory>();
+			inventory.Pickup( prefab );
+			return;
+		}
 
 		var objects = await spawner.Spawn( transform, player );
 

@@ -48,6 +48,8 @@
         "BurstPause": 0.8,
         "DisplayName": "Army Guy",
         "EngageSpeed": 180,
+        "FollowDistance": 150,
+        "Friendly": false,
         "Health": 100,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
@@ -2042,7 +2044,7 @@
             ]
           },
           {
-            "__guid": "62d599cb-cc10-4f84-93bb-2b8e060f05b5",
+            "__guid": "e1c608a9-4bb1-4bf4-975a-34de50401fa7",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - black_boots",
@@ -2059,7 +2061,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "4a8fe8f1-7984-46b7-bfe4-267829db9310",
+                "__guid": "f2738515-dd4f-4c70-b1b9-d1899ad3fb92",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2111,7 +2113,7 @@
             "Children": []
           },
           {
-            "__guid": "b317a9fe-49fb-4368-9a82-9f7fbd6bb375",
+            "__guid": "c6d1f724-7c99-4bc2-9143-c60d4fdb61b0",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - army_shirt",
@@ -2128,7 +2130,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "593fbed1-b3bb-4005-95b6-c259eca1a2dc",
+                "__guid": "3c96f9f1-896a-40e2-bac5-be7deab5e02a",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2180,7 +2182,7 @@
             "Children": []
           },
           {
-            "__guid": "c2b6f52e-38d6-44e6-bfdc-fe8465e0f5b9",
+            "__guid": "2d8b159c-ce83-47e9-9d3e-4c43ba7ffb67",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - cargo_pants_army",
@@ -2197,7 +2199,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "ba1d1c6c-32de-44dc-82a2-65eb36261961",
+                "__guid": "bd36f895-9b13-4646-935d-9c1047ef8542",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2249,7 +2251,7 @@
             "Children": []
           },
           {
-            "__guid": "3c262728-44ec-4a57-ac35-0e24db149cdb",
+            "__guid": "13fa8602-e2ab-45d6-bb74-58364d0e1ef2",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - balaclava",
@@ -2266,7 +2268,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "b6158284-9751-40a6-aa02-fb3043c854ef",
+                "__guid": "abe6f8d1-0848-4353-af3a-8c54ad3066e9",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2318,7 +2320,7 @@
             "Children": []
           },
           {
-            "__guid": "60ceb6ef-5bae-4186-81dc-f7743bba8cab",
+            "__guid": "6bfcc461-7e03-492d-b5f3-ee814243eb91",
             "__version": 2,
             "Flags": 0,
             "Name": "Clothing - tactical_vest",
@@ -2335,7 +2337,7 @@
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
-                "__guid": "d46c0501-576d-4050-bb47-799686ee822d",
+                "__guid": "77abdbbe-4439-4dd4-a786-3992ef8b85ac",
                 "__enabled": true,
                 "Flags": 0,
                 "AnimationGraph": null,
@@ -2473,6 +2475,7 @@
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
         "IncludedBodies": "",
+        "DeferGeneration": false,
         "CustomBounds": false
       }
     },

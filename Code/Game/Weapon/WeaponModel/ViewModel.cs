@@ -1,7 +1,52 @@
+using System.Threading;
+
 public sealed partial class ViewModel : WeaponModel, ICameraSetup
 {
 	[ConVar( "sbdm.hideviewmodel", ConVarFlags.Cheat )]
 	private static bool HideViewModel { get; set; } = false;
+
+	/// <summary>
+	/// A sound to play at a specific time during reload.
+	/// </summary>
+	public record struct ReloadSoundEntry
+	{
+		/// <summary>
+		/// Seconds after reload starts to play this sound.
+		/// </summary>
+		[KeyProperty] public float Time { get; set; }
+
+		/// <summary>
+		/// The sound to play.
+		/// </summary>
+		[Property, KeyProperty] public SoundEvent Sound { get; set; }
+	}
+
+	/// <summary>
+	/// Timed sound events to play during reload.
+	/// </summary>
+	[Property, Group( "Reload Sounds" )]
+	public List<ReloadSoundEntry> ReloadSoundEvents { get; set; } = new();
+
+	/// <summary>
+	/// Timed sound events to play during each incremental reload cycle.
+	/// </summary>
+	[Property, Group( "Reload Sounds" )]
+	public List<ReloadSoundEntry> IncrementalReloadSoundEvents { get; set; } = new();
+
+	/// <summary>
+	/// Timed sound events played when starting an incremental reload sequence.
+	/// </summary>
+	[Property, Group( "Reload Sounds" )]
+	public List<ReloadSoundEntry> IncrementalReloadStartSounds { get; set; } = new();
+
+	/// <summary>
+	/// Timed sound events played when finishing an incremental reload sequence.
+	/// </summary>
+	[Property, Group( "Reload Sounds" )]
+	public List<ReloadSoundEntry> IncrementalReloadFinishSounds { get; set; } = new();
+
+	private CancellationTokenSource _reloadSoundCts;
+	private CancellationTokenSource _reloadFinishSoundCts;
 
 	/// <summary>
 	/// Turns on incremental reloading parameters.
@@ -179,6 +224,11 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 		_reloadFinishing = false; // cancel any pending incremental finish from a previous reload
 		Renderer?.Set( "speed_reload", AnimationSpeed );
 		Renderer?.Set( IsIncremental ? "b_reloading" : "b_reload", true );
+
+		if ( IsIncremental )
+			StartSounds( IncrementalReloadStartSounds, ref _reloadFinishSoundCts );
+
+		StartSounds( ReloadSoundEvents, ref _reloadSoundCts );
 	}
 
 	/// <summary>
@@ -188,18 +238,72 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 	{
 		Renderer?.Set( "speed_reload", IncrementalAnimationSpeed );
 		Renderer?.Set( "b_reloading_shell", true );
+
+		StartSounds( IncrementalReloadSoundEvents, ref _reloadSoundCts );
 	}
 
 	public void OnReloadFinish()
 	{
+		CancelSounds( ref _reloadSoundCts );
+
 		if ( IsIncremental )
 		{
+			StartSounds( IncrementalReloadFinishSounds, ref _reloadFinishSoundCts );
+
 			_reloadFinishing = true;
 			_reloadFinishTimer = 0;
 		}
 		else
 		{
 			Renderer?.Set( "b_reload", false );
+		}
+	}
+
+	public void OnReloadCancel()
+	{
+		CancelSounds( ref _reloadSoundCts );
+		CancelSounds( ref _reloadFinishSoundCts );
+	}
+
+	private void StartSounds( List<ReloadSoundEntry> events, ref CancellationTokenSource cts )
+	{
+		CancelSounds( ref cts );
+
+		if ( events.Count == 0 )
+			return;
+
+		cts = new CancellationTokenSource();
+		_ = PlaySoundsAsync( events, cts.Token );
+	}
+
+	private void CancelSounds( ref CancellationTokenSource cts )
+	{
+		if ( cts is null ) return;
+
+		cts.Cancel();
+		cts.Dispose();
+		cts = null;
+	}
+
+	private async Task PlaySoundsAsync( List<ReloadSoundEntry> events, CancellationToken ct )
+	{
+		var sorted = events.OrderBy( e => e.Time ).ToList();
+		var elapsed = 0f;
+
+		foreach ( var entry in sorted )
+		{
+			var delay = entry.Time - elapsed;
+
+			if ( delay > 0f )
+				await Task.DelaySeconds( delay, ct );
+
+			if ( ct.IsCancellationRequested )
+				return;
+
+			if ( entry.Sound is not null )
+				GameObject.PlaySound( entry.Sound );
+
+			elapsed = entry.Time;
 		}
 	}
 }

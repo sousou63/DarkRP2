@@ -21,7 +21,11 @@
         "__enabled": true,
         "Flags": 0,
         "AnimationSpeed": 1,
-        "EjectBrass": null,
+        "DeploySound": "weapons/common/foley/foley_deploy_weapon_01.sound",
+        "EjectBrass": {
+          "_type": "gameobject",
+          "prefab": "weapons/common/effects/eject_rifle.prefab"
+        },
         "EjectTransform": {
           "_type": "gameobject",
           "go": "f356ae8a-95fe-4a7b-9afe-dc337736eb24"
@@ -44,6 +48,20 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
+        "ReloadSoundEvents": [
+          {
+            "Time": 0.1,
+            "Sound": "weapons/m4a1/reload/m4a1_mag_out.sound"
+          },
+          {
+            "Time": 1.1,
+            "Sound": "weapons/m4a1/reload/m4a1_mag_in.sound"
+          },
+          {
+            "Time": 1.58,
+            "Sound": "weapons/m4a1/reload/gun_grab_foley.sound"
+          }
+        ],
         "Renderer": {
           "_type": "component",
           "component_id": "0d315a8a-856e-49cb-b5d6-a16482eaf1be",
