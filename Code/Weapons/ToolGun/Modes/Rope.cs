@@ -1,7 +1,8 @@
 ﻿﻿
 [Icon( "🐍" )]
+[Title( "#tool.name.rope" )]
 [ClassName( "rope" )]
-[Group( "Constraints" )]
+[Group( "#tool.group.constraints" )]
 public class Rope : BaseConstraintToolMode
 {
 	protected override bool CountsTowardToolSpawnLimit => true;

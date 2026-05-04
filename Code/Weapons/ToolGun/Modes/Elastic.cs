@@ -1,6 +1,7 @@
 ﻿[Icon( "🌀" )]
+[Title( "#tool.name.elastic" )]
 [ClassName( "elastic" )]
-[Group( "Constraints" )]
+[Group( "#tool.group.constraints" )]
 public class Elastic : BaseConstraintToolMode
 {
 	protected override bool CountsTowardToolSpawnLimit => true;

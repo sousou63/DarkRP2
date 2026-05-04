@@ -3,33 +3,36 @@
 @inherits UtilityPage
 @namespace Sandbox
 @attribute [Icon( "🧹" )]
-@attribute [Title( "Cleanup" )]
-@attribute [Group( "World" )]
+@attribute [Title( "#spawnmenu.utility.cleanup" )]
+@attribute [Group( "#spawnmenu.utility.group.world" )]
 @attribute [Order( 0 )]
 
 <root class="page" style="flex-direction: column;">
     <div class="control-row" @onclick=@(() =>CleanUpMine() )>
-        <label class="left">🧼 Clean Up Mine</label>
+        <div class="left"><label>🧼 </label><label>#spawnmenu.utility.cleanup_mine</label></div>
     </div>
 
-    <div class="control-row" @onclick=@(() =>CleanUpAll() )>
-        <label class="left">🧹 Clean Up All</label>
-    </div>
-
-    <div class="section-header">Clean Up Player</div>
-
-    @foreach ( var connection in Connection.All )
+    @if ( Connection.Local.HasPermission( "admin" ) )
     {
-        var c = connection;
-        <div class="control-row" @onclick=@(() => CleanUpPlayer( c ))>
-            <label class="left">🗑️ @c.DisplayName</label>
+        <div class="control-row" @onclick=@(() =>CleanUpAll() )>
+            <div class="left"><label>🧹 </label><label>#spawnmenu.utility.cleanup_all</label></div>
         </div>
+
+        <div class="section-header">#spawnmenu.utility.cleanup_player</div>
+
+        @foreach ( var connection in Connection.All )
+        {
+            var c = connection;
+            <div class="control-row" @onclick=@(() => CleanUpPlayer( c ))>
+                <label class="left">🗑️ @c.DisplayName</label>
+            </div>
+        }
     }
 </root>
 
 @code
 {
-    public override bool IsVisible() => Player.FindLocalPlayer()?.HasSuperAdminAccess == true;
+    public override bool IsPageVisible() => Player.FindLocalPlayer()?.HasSuperAdminAccess == true;
 
     void CleanUpMine() => CleanupSystem.RpcCleanUpMine();
     void CleanUpAll() => CleanupSystem.RpcCleanUpAll();

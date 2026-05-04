@@ -3,13 +3,13 @@
 @inherits UtilityPage
 @namespace Sandbox
 @attribute [Icon( "👥" )]
-@attribute [Title( "Users" )]
-@attribute [Group( "World" )]
+@attribute [Title( "#spawnmenu.utility.users" )]
+@attribute [Group( "#spawnmenu.utility.group.world" )]
 @attribute [Order( 1 )]
 
 <root class="page" style="flex-direction: column;">
 
-    <div class="section-header">Ban List</div>
+    <div class="section-header">#spawnmenu.utility.ban_list</div>
 
     @{
         var bans = BanSystem.Current?.GetBannedList();
@@ -18,7 +18,7 @@
     @if ( bans is null || bans.Count == 0 )
     {
         <div class="control-row">
-            <label class="left" style="opacity: 0.5;">No one has been banned yet.</label>
+            <label class="left" style="opacity: 0.5;">#spawnmenu.utility.no_bans</label>
         </div>
     }
     else
@@ -52,7 +52,7 @@
     bool CanAccessBanList => Player.FindLocalPlayer()?.HasAdminAccess == true;
     bool CanManageBans => Player.FindLocalPlayer()?.HasSuperAdminAccess == true;
 
-    public override bool IsVisible() => CanAccessBanList;
+    public override bool IsPageVisible() => CanAccessBanList;
 
     protected override void OnAfterTreeRender( bool firstTime )
     {
@@ -72,15 +72,15 @@
 
         var menu = MenuPanel.Open( this );
 
-        menu.AddOption( "person_add", "Unban", () =>
+        menu.AddOption( "person_add", "#spawnmenu.utility.unban", () =>
         {
             BanSystem.RpcUnban( (long)steamId.Value );
         } );
 
-        menu.AddOption( "content_copy", "Copy Steam ID", () =>
+        menu.AddOption( "content_copy", "#spawnmenu.utility.copy_steam_id", () =>
         {
             Clipboard.SetText( steamId.ToString() );
-            Notices.AddNotice( "copy_all", Color.Cyan, $"Copied {entry.DisplayName}'s Steam ID to clipboard", 5 );
+            Notices.AddNotice( "copy_all", Color.Cyan, Game.Language.GetPhrase( "spawnmenu.utility.copied_steam_id", new() { { "name", entry.DisplayName } } ), 5 );
         } );
     }
 

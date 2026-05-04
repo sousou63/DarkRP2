@@ -1,9 +1,9 @@
 using Sandbox.UI;
 
 [Icon( "✨" )]
-[Title( "Trail" )]
+[Title( "#tool.name.trail" )]
 [ClassName( "trail" )]
-[Group( "Render" )]
+[Group( "#tool.group.render" )]
 public class Trail : ToolMode
 {
 	const string TrailLimitMarkerName = "trail_limit_marker";

@@ -1,8 +1,8 @@
 ﻿[Hide]
-[Title( "Hydraulic" )]
+[Title( "#tool.name.hydraulic" )]
 [Icon( "⚙️" )]
 [ClassName( "HydraulicTool" )]
-[Group( "Building" )]
+[Group( "#tool.group.building" )]
 public class HydraulicTool : BaseConstraintToolMode
 {
 	protected override bool CountsTowardToolSpawnLimit => true;
