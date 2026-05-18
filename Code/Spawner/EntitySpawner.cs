@@ -4,6 +4,7 @@
 public class EntitySpawner : ISpawner
 {
 	public string DisplayName { get; private set; }
+	public string FullIdent => Path is not null && !Path.EndsWith( ".sent" ) ? Path : null;
 	public string Icon => Path;
 	public string Data => Path;
 	public BBox Bounds { get; private set; }
