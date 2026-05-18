@@ -92,6 +92,35 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		SetToolMode( toolModeName );
 	}
 
+	/// <summary>
+	/// If we already own a weapon matching this prefab, try to give it ammo.
+	/// Returns true if handled (caller should stop). False means no existing weapon found.
+	/// </summary>
+	private bool TryGiveAmmoToExisting( GameObject prefab, bool notice )
+	{
+		var baseCarry = prefab.Components.Get<BaseCarryable>( true );
+		if ( !baseCarry.IsValid() )
+			return false;
+
+		var existing = Weapons.FirstOrDefault( x => x.GameObject.Name == prefab.Name );
+		if ( !existing.IsValid() )
+			return false;
+
+		if ( existing is BaseWeapon existingWeapon && baseCarry is BaseWeapon pickupWeapon && existingWeapon.UsesAmmo )
+		{
+			if ( existingWeapon.ReserveAmmo >= existingWeapon.MaxReserveAmmo )
+				return true;
+
+			var ammoToGive = pickupWeapon.UsesClips ? pickupWeapon.ClipContents : pickupWeapon.StartingAmmo;
+			existingWeapon.AddReserveAmmo( ammoToGive );
+
+			if ( notice )
+				OnClientPickup( existing, true );
+		}
+
+		return true;
+	}
+
 	public bool Pickup( string prefabName, bool notice = true )
 	{
 		if ( !Networking.IsHost )
@@ -103,6 +132,9 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 			Log.Warning( $"Prefab not found: {prefabName}" );
 			return false;
 		}
+
+		if ( TryGiveAmmoToExisting( prefab, notice ) )
+			return true;
 
 		var slot = FindEmptySlot();
 		if ( slot < 0 )
@@ -134,6 +166,9 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 
 	public bool Pickup( GameObject prefab, bool notice = true )
 	{
+		if ( TryGiveAmmoToExisting( prefab, notice ) )
+			return true;
+
 		var slot = FindEmptySlot();
 		if ( slot < 0 )
 			return false;
@@ -171,23 +206,8 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		if ( !baseCarry.IsValid() )
 			return false;
 
-		var existing = Weapons.Where( x => x.GameObject.Name == prefab.Name ).FirstOrDefault();
-		if ( existing.IsValid() )
-		{
-			if ( existing is BaseWeapon existingWeapon && baseCarry is BaseWeapon pickupWeapon && existingWeapon.UsesAmmo )
-			{
-				if ( existingWeapon.ReserveAmmo >= existingWeapon.MaxReserveAmmo )
-					return false;
-
-				var ammoToGive = pickupWeapon.UsesClips ? pickupWeapon.ClipContents : pickupWeapon.StartingAmmo;
-				existingWeapon.AddReserveAmmo( ammoToGive );
-
-				if ( notice )
-					OnClientPickup( existing, true );
-
-				return true;
-			}
-		}
+		if ( TryGiveAmmoToExisting( prefab, notice ) )
+			return true;
 
 		// Reject if the target slot is already occupied
 		var occupant = GetSlot( targetSlot );
