@@ -1,0 +1,8 @@
+{
+  "Title": "Grenade",
+  "Icon": null,
+  "MaxReserve": 4,
+  "DefaultStartingAmmo": 1,
+  "__references": [],
+  "__version": 0
+}

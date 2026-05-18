@@ -236,7 +236,8 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 			{
 				if ( existingWeapon.ReserveAmmo < existingWeapon.MaxReserveAmmo )
 				{
-					existingWeapon.AddReserveAmmo( pickupWeapon.ClipContents );
+						var ammoToGive = pickupWeapon.UsesClips ? pickupWeapon.ClipContents : pickupWeapon.StartingAmmo;
+					existingWeapon.AddReserveAmmo( ammoToGive );
 					OnClientPickup( existing, true );
 				}
 			}
