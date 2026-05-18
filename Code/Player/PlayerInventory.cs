@@ -40,6 +40,28 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 	}
 
 	/// <summary>
+	/// Returns whether the given item could be inserted into the inventory.
+	/// Checks for existing weapons that can receive ammo, and empty slots.
+	/// </summary>
+	public bool CanTake( BaseCarryable item )
+	{
+		if ( !item.IsValid() )
+			return false;
+
+		var existing = Weapons.FirstOrDefault( x => x.GetType() == item.GetType() );
+		if ( existing.IsValid() )
+		{
+			// We already have this weapon — only allow if it can receive ammo
+			if ( existing is BaseWeapon existingWeapon && existingWeapon.UsesAmmo )
+				return existingWeapon.ReserveAmmo < existingWeapon.MaxReserveAmmo;
+
+			return false;
+		}
+
+		return FindEmptySlot() >= 0;
+	}
+
+	/// <summary>
 	/// Returns the first empty slot index, or -1 if the inventory is full.
 	/// </summary>
 	public int FindEmptySlot()
@@ -247,30 +269,27 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		return true;
 	}
 
-	public void Take( BaseCarryable item, bool includeNotices )
+	public bool Take( BaseCarryable item, bool includeNotices )
 	{
+		if ( !CanTake( item ) )
+			return false;
+
 		var existing = Weapons.FirstOrDefault( x => x.GetType() == item.GetType() );
 		if ( existing.IsValid() )
 		{
 			if ( existing is BaseWeapon existingWeapon && item is BaseWeapon pickupWeapon && existingWeapon.UsesAmmo )
 			{
-				if ( existingWeapon.ReserveAmmo < existingWeapon.MaxReserveAmmo )
-				{
-						var ammoToGive = pickupWeapon.UsesClips ? pickupWeapon.ClipContents : pickupWeapon.StartingAmmo;
-					existingWeapon.AddReserveAmmo( ammoToGive );
-					OnClientPickup( existing, true );
-				}
+				var ammoToGive = pickupWeapon.UsesClips ? pickupWeapon.ClipContents : pickupWeapon.StartingAmmo;
+				existingWeapon.AddReserveAmmo( ammoToGive );
+				OnClientPickup( existing, true );
+				item.DestroyGameObject();
+				return true;
 			}
 
-			item.DestroyGameObject();
-			return;
+			return false;
 		}
 
-		// Reject if the inventory is full
 		var slot = FindEmptySlot();
-		if ( slot < 0 )
-			return;
-
 		item.GameObject.SetParent( GameObject, false );
 		item.LocalTransform = global::Transform.Zero;
 		item.InventorySlot = slot;
@@ -293,10 +312,11 @@ public sealed class PlayerInventory : Component, Local.IPlayerEvents
 		if ( pickupEvent.Cancelled )
 		{
 			item.DestroyGameObject();
-			return;
+			return false;
 		}
 
 		OnClientPickup( item );
+		return true;
 	}
 
 	/// <summary>

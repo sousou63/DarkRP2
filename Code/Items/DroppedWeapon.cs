@@ -1,3 +1,5 @@
+using Sandbox.UI;
+
 public sealed class DroppedWeapon : Component, Component.IPressable, PlayerController.IEvents
 {
 	IPressable.Tooltip? IPressable.GetTooltip( IPressable.Event e )
@@ -8,7 +10,22 @@ public sealed class DroppedWeapon : Component, Component.IPressable, PlayerContr
 		var name = weapon.DisplayName.ToUpper();
 
 		if ( HasInput() ) return new IPressable.Tooltip( "Can't pick this up", "block", name );
+		if ( IsInventoryFull() ) return new IPressable.Tooltip( "Inventory Full", "block", name );
 		return new IPressable.Tooltip( "Pick up", "inventory_2", name );
+	}
+
+	private bool IsInventoryFull()
+	{
+		var player = Player.FindLocalPlayer();
+		if ( !player.IsValid() ) return false;
+
+		var inventory = player.GetComponent<PlayerInventory>();
+		if ( !inventory.IsValid() ) return false;
+
+		var weapon = GetComponent<BaseCarryable>();
+		if ( !weapon.IsValid() ) return false;
+
+		return !inventory.CanTake( weapon );
 	}
 
 	private bool HasInput()
@@ -24,6 +41,8 @@ public sealed class DroppedWeapon : Component, Component.IPressable, PlayerContr
 		// Can't pick up weapons that are fireable by a contraption
 		//
 		if ( HasInput() ) return false;
+
+		if ( IsInventoryFull() ) return false;
 
 		return true;
 	}
@@ -56,8 +75,18 @@ public sealed class DroppedWeapon : Component, Component.IPressable, PlayerContr
 		var weapon = GetComponent<BaseCarryable>();
 		if ( !weapon.IsValid() ) return;
 
-		Enabled = false;
+		if ( !inventory.Take( weapon, true ) )
+		{
+			ShowInventoryFull();
+			return;
+		}
 
-		inventory.Take( weapon, true );
+		Enabled = false;
+	}
+
+	[Rpc.Owner]
+	private void ShowInventoryFull()
+	{
+		Notices.AddNotice( "block", Color.Red, "Inventory Full", 2 );
 	}
 }
