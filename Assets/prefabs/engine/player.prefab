@@ -71,7 +71,7 @@
         "DuckedSpeed": 70,
         "EnableFootstepSounds": true,
         "EnablePressing": true,
-        "EyeDistanceFromTop": 8,
+        "EyeDistanceFromTop": 5,
         "FootstepMixer": {
           "Name": "game",
           "Id": "2d9828d0-7984-4843-b6b2-22d4336497d5"
