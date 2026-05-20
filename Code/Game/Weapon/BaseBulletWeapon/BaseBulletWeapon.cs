@@ -80,6 +80,7 @@ public partial class BaseBulletWeapon : BaseWeapon
 
 		var tr = Scene.Trace.Ray( traceRay, config.Range )
 			.IgnoreGameObjectHierarchy( AimIgnoreRoot )
+			.WithCollisionRules( "bullet" )
 			.WithoutTags( "playercontroller" )
 			.Radius( config.BulletRadius )
 			.UseHitboxes()
