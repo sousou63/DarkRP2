@@ -100,6 +100,8 @@ public class MeleeWeapon : BaseCarryable
 		if ( !hit || !hitObject.IsValid() )
 			return;
 
+		ViewModel.RunEvent<ViewModel>( x => x.Renderer.Set( "b_attack_has_hit", true ) );
+
 		hitObject.PlaySound(
 			hitSurface.SoundCollection.ImpactHard ?? hitSurface.GetBaseSurface()?.SoundCollection.ImpactHard ?? HitSound,
 			hitObject.WorldTransform.PointToLocal( hitpoint ) );

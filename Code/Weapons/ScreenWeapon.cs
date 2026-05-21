@@ -72,23 +72,25 @@ public partial class ScreenWeapon : BaseCarryable
 	/// </summary>
 	protected void UpdateViewmodelScreen()
 	{
-		if ( ScreenRefreshInterval > 0f && _lastScreenUpdate < ScreenRefreshInterval )
-			return;
-
-		_lastScreenUpdate = 0;
-
 		if ( !ViewModel.IsValid() ) return;
 
 		var modelRenderer = ViewModel.GetComponentInChildren<SkinnedModelRenderer>();
 		if ( !modelRenderer.IsValid() ) return;
 
+		// Clear any previously assigned command list so it only executes once per update
+		modelRenderer.ExecuteBefore = null;
+
+		if ( ScreenRefreshInterval > 0f && _lastScreenUpdate < ScreenRefreshInterval )
+			return;
+
+		_lastScreenUpdate = 0;
+
 		var oldMaterial = modelRenderer.Model.Materials.FirstOrDefault( x => x.Name.Contains( ScreenMaterialName ) );
 		var index = modelRenderer.Model.Materials.IndexOf( oldMaterial );
 		if ( index < 0 ) return;
 
-		_screenTexture ??= Texture.CreateRenderTarget().WithSize( ScreenTextureSize.x, ScreenTextureSize.y ).WithInitialColor( Color.Red ).WithMips()
+		_screenTexture ??= Texture.CreateRenderTarget().WithSize( ScreenTextureSize.x, ScreenTextureSize.y ).WithInitialColor( Color.Red )
 			.Create();
-		_screenTexture.Clear( Color.Random );
 
 		_screenMaterialCopy ??= Material.Load( ScreenMaterialPath ).CreateCopy();
 		_screenMaterialCopy.Attributes.Set( "Emissive", _screenTexture );
@@ -103,7 +105,7 @@ public partial class ScreenWeapon : BaseCarryable
 	{
 		var rt = RenderTarget.From( _screenTexture );
 
-		var cl = new CommandList();
+		var cl = new CommandList( "ScreenWeaponViewScreen");
 		renderer.ExecuteBefore = cl;
 
 		cl.SetRenderTarget( rt );
@@ -112,7 +114,6 @@ public partial class ScreenWeapon : BaseCarryable
 		DrawScreenContent( new Rect( 0, _screenTexture.Size ), cl.Paint );
 
 		cl.ClearRenderTarget();
-		cl.GenerateMipMaps( rt );
 	}
 
 	/// <summary>

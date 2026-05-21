@@ -59,6 +59,7 @@ PS
     RenderState( DstBlend, INV_SRC_ALPHA );
 
     float BlurAmount < Attribute( "BlurAmount" ); Default( 1.0f ); >;
+    float ScopeReveal < Attribute( "ScopeReveal" ); Default( 1.0f ); >;
     float2 Offset < Attribute( "Offset" ); >;
 
     float sdCircle( float2 p, float r )
@@ -79,7 +80,7 @@ PS
         float2 center = g_vViewportSize * 0.5f;
         center += Offset * g_vViewportSize.xy;
 
-        float radius = g_vViewportSize.y * 0.45f;
+        float radius = g_vViewportSize.y * 0.45f * ScopeReveal;
 
         float d = sdCircle( pos - center, radius );
 

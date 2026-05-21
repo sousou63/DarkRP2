@@ -96,6 +96,7 @@
         "OnComponentUpdate": null,
         "OverrideMassCenter": false,
         "RigidbodyFlags": 0,
+        "SleepThreshold": 2,
         "StartAsleep": false
       }
     ],
@@ -105,8 +106,8 @@
         "__version": 2,
         "Flags": 0,
         "Name": "Cube",
-        "Position": "-2.17589998,0,1.56366301",
-        "Rotation": "0,0.70710659,0,0.707106829",
+        "Position": "0,0,0",
+        "Rotation": "0.269457906,0.653752565,0.269457906,0.653752565",
         "Scale": "1,1,1",
         "Tags": "",
         "Enabled": true,

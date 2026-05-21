@@ -16,6 +16,21 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 	[Property] public float ThrowPower { get; set; } = 1200f;
 
 	/// <summary>
+	/// Sound played when the pin is pulled and cooking starts.
+	/// </summary>
+	[Property] public SoundEvent PinPullSound { get; set; }
+
+	/// <summary>
+	/// Sound played when the grenade is thrown.
+	/// </summary>
+	[Property] public SoundEvent ThrowSound { get; set; }
+
+	/// <summary>
+	/// Sound played when deploying the next grenade after a throw.
+	/// </summary>
+	[Property] public SoundEvent DeploySound { get; set; }
+
+	/// <summary>
 	/// Fuse time in seconds — grenade explodes after this, whether thrown or not.
 	/// </summary>
 	[Property] public float Lifetime { get; set; } = 3f;
@@ -85,7 +100,10 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 				}
 
 				// Deploy next grenade
-				WeaponModel?.Renderer?.Set( "b_deploy_new", true );
+				if ( DeploySound is not null )
+					GameObject.PlaySound( DeploySound );
+
+					WeaponModel?.Renderer?.Set( "b_reload", true );
 			}
 
 			return;
@@ -96,6 +114,9 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 		{
 			IsCooking = true;
 			TimeSinceCooked = 0;
+
+			if ( PinPullSound is not null )
+				GameObject.PlaySound( PinPullSound );
 
 			WeaponModel?.Renderer?.Set( "b_charge", true );
 			WeaponModel?.Renderer?.Set( "charge_type", 0 );
@@ -167,6 +188,9 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 		SpawnProjectile( player, startPos, direction, powerScale );
 
 		// Play throw animation
+		if ( ThrowSound is not null )
+			GameObject.PlaySound( ThrowSound );
+
 		WeaponModel?.Renderer?.Set( "b_charge", false );
 		WeaponModel?.Renderer?.Set( "b_attack", true );
 
@@ -181,9 +205,15 @@ public sealed class HandGrenadeWeapon : BaseWeapon
 		var right = eye.Rotation.Right;
 		var forward = direction;
 
-		var target = eye.Position + forward * 18f + right * 8f;
+		var origin = eye.Position;
 
-		var tr = Scene.Trace.Box( BBox.FromPositionAndSize( Vector3.Zero, 8f ), eye.Position, target )
+		// Underthrow starts lower (waist height)
+		if ( CurrentThrowType == ThrowType.Near )
+			origin -= Vector3.Up * 20f;
+
+		var target = origin + forward * 18f + right * 8f;
+
+		var tr = Scene.Trace.Box( BBox.FromPositionAndSize( Vector3.Zero, 8f ), origin, target )
 			.WithoutTags( "trigger", "ragdoll" )
 			.IgnoreGameObjectHierarchy( player.GameObject )
 			.Run();

@@ -5,11 +5,14 @@ public class SniperWeapon : BaseBulletWeapon
 	[Property] public float PrimaryFireRate { get; set; } = 1.2f;
 	[Property] public float ScopedFov { get; set; } = 20f;
 	[Property] public float ScopeSensitivity { get; set; } = 0.3f;
+	[Property] public SoundEvent BoltPullSound { get; set; }
 
 	private bool _isScoped;
 	private float _mouseDelta;
 	private SniperScopeEffect _scopeEffect;
 	private bool _hasFired;
+	private TimeUntil _timeUntilHideViewModel;
+	private bool _viewModelHidden;
 
 	public bool IsScoped => _isScoped;
 
@@ -22,12 +25,12 @@ public class SniperWeapon : BaseBulletWeapon
 
 	protected override bool WantsSecondaryAttack()
 	{
-		return Input.Pressed( "attack2" );
+		return false;
 	}
 
 	public override bool CanSecondaryAttack()
 	{
-		return true;
+		return false;
 	}
 
 	public override void PrimaryAttack()
@@ -36,25 +39,51 @@ public class SniperWeapon : BaseBulletWeapon
 		_hasFired = true;
 	}
 
-	public override void SecondaryAttack()
-	{
-		SetScoped( !_isScoped );
-	}
-
 	private void SetScoped( bool scoped )
 	{
 		_isScoped = scoped;
 
+		// Trigger ironsights animation
+		ViewModel?.RunEvent<ViewModel>( x =>
+		{
+			x.Renderer?.Set( "ironsights", _isScoped ? 1 : 0 );
+		} );
+
 		if ( _isScoped )
 		{
-			_scopeEffect = Scene.Camera.Components.GetOrCreate<SniperScopeEffect>();
-			_scopeEffect.Flags |= ComponentFlags.NotNetworked;
+			// Delay hiding the viewmodel until the ADS animation finishes
+			_timeUntilHideViewModel = 0.2f;
 		}
 		else
 		{
+			ShowViewModel();
+
 			_scopeEffect?.Destroy();
 			_scopeEffect = default;
 		}
+	}
+
+	private void HideViewModel()
+	{
+		if ( _viewModelHidden ) return;
+		_viewModelHidden = true;
+
+		if ( ViewModel.IsValid() )
+			Scene.Camera.RenderExcludeTags.Add( "sniper_scoped" );
+
+		if ( ViewModel.IsValid() )
+			ViewModel.Tags.Add( "sniper_scoped" );
+	}
+
+	private void ShowViewModel()
+	{
+		if ( !_viewModelHidden ) return;
+		_viewModelHidden = false;
+
+		Scene.Camera.RenderExcludeTags.Remove( "sniper_scoped" );
+
+		if ( ViewModel.IsValid() )
+			ViewModel.Tags.Remove( "sniper_scoped" );
 	}
 
 	protected override void OnDisabled()
@@ -63,15 +92,37 @@ public class SniperWeapon : BaseBulletWeapon
 
 		if ( _isScoped )
 			SetScoped( false );
+
+		ShowViewModel();
 	}
 
 	public override void OnControl( Player player )
 	{
 		base.OnControl( player );
 
+		// Hold right mouse to scope
+		var wantsScope = Input.Down( "attack2" );
+		if ( wantsScope != _isScoped )
+		{
+			SetScoped( wantsScope );
+		}
+
+		// Hide viewmodel once ADS animation has finished, then enable scope overlay
+		if ( _isScoped && !_viewModelHidden && _timeUntilHideViewModel )
+		{
+			HideViewModel();
+
+			_scopeEffect = Scene.Camera.Components.GetOrCreate<SniperScopeEffect>();
+			_scopeEffect.Flags |= ComponentFlags.NotNetworked;
+		}
+
 		if ( _hasFired && Input.Released( "attack1" ) )
 		{
 			_hasFired = false;
+
+			if ( BoltPullSound is not null )
+				Sound.Play( BoltPullSound, WorldPosition );
+
 			ViewModel?.RunEvent<ViewModel>( x =>
 			{
 				x.Renderer?.Set( "speed_reload", 1 );
@@ -84,7 +135,7 @@ public class SniperWeapon : BaseBulletWeapon
 	{
 		if ( !player.Network.IsOwner || !Network.IsOwner ) return;
 
-		if ( _isScoped )
+		if ( _isScoped && _viewModelHidden )
 		{
 			camera.FieldOfView = ScopedFov;
 		}
@@ -94,7 +145,7 @@ public class SniperWeapon : BaseBulletWeapon
 	{
 		_mouseDelta = new Vector2( angles.yaw, angles.pitch ).Length;
 
-		if ( _isScoped )
+		if ( _isScoped && _viewModelHidden )
 		{
 			angles *= ScopeSensitivity;
 		}

@@ -20,9 +20,11 @@
         "__guid": "ab522638-2fd4-40a8-b165-36922f5ec630",
         "__enabled": true,
         "Flags": 0,
+        "AmmoType": "ammotype/grenade.ammo",
         "CanCancelReload": false,
         "ClipContents": 17,
         "ClipMaxSize": 17,
+        "DeploySound": null,
         "DeployTime": 0.5,
         "DisplayIcon": {
           "$compiler": "texture",
@@ -72,7 +74,8 @@
         "ItemPrefab": null,
         "Lifetime": 3,
         "MaxDamage": 125,
-        "MaxReserveAmmo": 1,
+        "MaxReserveAmmo": 4,
+        "MuzzleGameObject": null,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -80,15 +83,25 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "ParentBone": "hold_r",
+        "PinPullSound": "weapons/grenade/sounds/grenade_pin_pull.sound",
         "Prefab": {
           "_type": "gameobject",
           "prefab": "weapons/grenade/thrown_grenade.prefab"
         },
         "Radius": 512,
         "ReloadTime": 1.5,
-        "ReserveAmmo": 1,
-        "StartingAmmo": 1,
+        "ReserveAmmo": 0,
+        "SecondaryInput": {
+          "IsEnabled": false,
+          "Action": null
+        },
+        "ShootInput": {
+          "IsEnabled": false,
+          "Action": null
+        },
+        "StartingAmmo": 4,
         "ThrowPower": 1200,
+        "ThrowSound": "weapons/m4a1/reload/gun_grab_foley.sound",
         "UsesAmmo": true,
         "UsesClips": false,
         "Value": 2,
@@ -170,6 +183,7 @@
         "OnComponentUpdate": null,
         "OverrideMassCenter": false,
         "RigidbodyFlags": 0,
+        "SleepThreshold": 2,
         "StartAsleep": false
       }
     ],
@@ -195,6 +209,7 @@
             "__guid": "3dd2497e-bb05-416d-81fe-0c469d0ff591",
             "__enabled": true,
             "Flags": 0,
+            "DeploySound": null,
             "EjectBrass": null,
             "EjectTransform": null,
             "MuzzleEffect": null,
@@ -278,6 +293,7 @@
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
         "IncludedBodies": "",
+        "DeferGeneration": false,
         "CustomBounds": false
       }
     },

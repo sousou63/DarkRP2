@@ -84,6 +84,7 @@
         "OnComponentUpdate": null,
         "OverrideMassCenter": false,
         "RigidbodyFlags": 0,
+        "SleepThreshold": 2,
         "StartAsleep": false
       },
       {
@@ -93,8 +94,8 @@
         "Flags": 0,
         "AmmoType": "ammotype/rocket.ammo",
         "CanCancelReload": false,
-        "ClipContents": 17,
-        "ClipMaxSize": 17,
+        "ClipContents": 1,
+        "ClipMaxSize": 1,
         "DeployTime": 0.5,
         "DisplayIcon": {
           "$compiler": "texture",
@@ -117,8 +118,10 @@
           "_type": "gameobject",
           "go": "00edf338-ad8d-4472-9725-250b57efbaba"
         },
+        "FirstShellReloadTime": 0,
         "HoldType": "RPG",
         "IncrementalReloading": false,
+        "IsTrackedAim": false,
         "ItemPrefab": null,
         "MaxReserveAmmo": 6,
         "MuzzleGameObject": {
@@ -136,6 +139,8 @@
           "_type": "gameobject",
           "prefab": "weapons/rpg/rpg_projectile.prefab"
         },
+        "ProjectileSpeed": 1024,
+        "ReloadStartTime": 0,
         "ReloadTime": 1.5,
         "ReserveAmmo": 0,
         "SecondaryInput": {
@@ -150,7 +155,7 @@
         "StartingAmmo": 1,
         "TimeBetweenShots": 2,
         "UsesAmmo": true,
-        "UsesClips": false,
+        "UsesClips": true,
         "Value": 2,
         "ViewModelPrefab": {
           "_type": "gameobject",
@@ -184,6 +189,7 @@
             "__guid": "3dd2497e-bb05-416d-81fe-0c469d0ff591",
             "__enabled": true,
             "Flags": 0,
+            "DeploySound": null,
             "EjectBrass": null,
             "EjectTransform": null,
             "MuzzleEffect": null,

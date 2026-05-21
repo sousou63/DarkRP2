@@ -10,6 +10,11 @@ public interface ISpawner
 	string DisplayName { get; }
 
 	/// <summary>
+	/// A full ident if it's a sbox.game thing
+	/// </summary>
+	string FullIdent => null;
+
+	/// <summary>
 	/// Icon path for this payload, used for inventory display via <c>thumb:path</c>.
 	/// </summary>
 	string Icon { get; }

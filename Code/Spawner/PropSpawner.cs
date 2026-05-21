@@ -6,6 +6,7 @@ using Sandbox.UI;
 public class PropSpawner : ISpawner
 {
 	public string DisplayName { get; private set; }
+	public string FullIdent => Path is not null && !Path.EndsWith( ".vmdl" ) && !Path.EndsWith( ".vmdl_c" ) ? Path : null;
 	public string Icon => Path;
 	public string Data => Path;
 	public BBox Bounds => Model?.Bounds ?? default;

@@ -182,6 +182,8 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		if ( !Controller.Renderer.IsValid() )
 			return;
 
+		var batch = Scene.BatchGroup();
+
 		var go = new GameObject( true, "Ragdoll" );
 		go.Tags.Add( "ragdoll" );
 		go.WorldTransform = WorldTransform;
@@ -206,21 +208,21 @@ public sealed partial class Player : Component, Component.IDamageable, PlayerCon
 		var physics = go.Components.Create<ModelPhysics>();
 		physics.Model = mainBody.Model;
 		physics.Renderer = mainBody;
+		batch.Dispose();
+
 		physics.CopyBonesFrom( Controller.Renderer, true );
 
-		ApplyRagdollForce( physics, velocity, origin );
-		
 		var corpse = go.AddComponent<DeathCameraTarget>();
 		corpse.Connection = Network.Owner;
 		corpse.Created = DateTime.Now;
 
 		CopyBoneScalesToRagdoll( go );
+
+		ApplyRagdollForce( physics, velocity, origin );
 	}
 
-	async void ApplyRagdollForce( ModelPhysics physics, Vector3 force, Vector3 origin )
+	void ApplyRagdollForce( ModelPhysics physics, Vector3 force, Vector3 origin )
 	{
-		await GameTask.Delay( 10 );
-
 		if ( !physics.IsValid() ) return;
 		if ( force.Length < 1 ) return;
 

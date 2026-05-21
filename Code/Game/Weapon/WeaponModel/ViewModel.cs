@@ -234,10 +234,14 @@ public sealed partial class ViewModel : WeaponModel, ICameraSetup
 	/// <summary>
 	/// Called when incrementally reloading a weapon.
 	/// </summary>
-	public void OnIncrementalReload()
+	public void OnIncrementalReload( bool firstShell = false )
 	{
 		Renderer?.Set( "speed_reload", IncrementalAnimationSpeed );
-		Renderer?.Set( "b_reloading_shell", true );
+
+		if ( firstShell )
+			Renderer?.Set( "b_reloading_first_shell", true );
+		else
+			Renderer?.Set( "b_reloading_shell", true );
 
 		StartSounds( IncrementalReloadSoundEvents, ref _reloadSoundCts );
 	}
