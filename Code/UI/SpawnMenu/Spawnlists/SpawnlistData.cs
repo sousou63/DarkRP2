@@ -159,5 +159,17 @@ public class SpawnlistData
 			if ( created is not null )
 				AddItem( created, item );
 		} );
+
+		var (type, path, source) = SpawnlistItem.ParseIdent( item.Ident );
+		var spawner = ISpawner.Create( type, path, source );
+		var fullIdent = spawner?.FullIdent;
+
+		if ( !string.IsNullOrEmpty( fullIdent ) )
+		{
+			menu.AddOption( "🌐", "sbox.game", () =>
+			{
+				Game.Overlay.ShowPackageModal( fullIdent );
+			} );
+		}
 	}
 }

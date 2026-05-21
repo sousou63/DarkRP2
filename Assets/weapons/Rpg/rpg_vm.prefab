@@ -27,7 +27,7 @@
           "_type": "gameobject",
           "go": "33f8c517-fd02-4032-ac3c-367ab3411139"
         },
-        "IncrementalAnimationSpeed": 3,
+        "IncrementalAnimationSpeed": 1,
         "IncrementalReloadFinishSounds": [],
         "IncrementalReloadSoundEvents": [],
         "IncrementalReloadStartSounds": [],
@@ -45,7 +45,20 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ReloadSoundEvents": [],
+        "ReloadSoundEvents": [
+          {
+            "Time": 0,
+            "Sound": "weapons/common/foley/foley_deploy_weapon_03.sound"
+          },
+          {
+            "Time": 2.2,
+            "Sound": "weapons/rpg/sounds/rpg_reload_foley_01.sound"
+          },
+          {
+            "Time": 2.8,
+            "Sound": "weapons/rpg/sounds/rpg_reload_close.sound"
+          }
+        ],
         "Renderer": {
           "_type": "component",
           "component_id": "f53dd8cf-dc6a-4d32-ba6e-e7de48ce9fef",

@@ -83,8 +83,8 @@ PS
 	float ReadSample( float sampleX, int channel )
 	{
 		// Read from row 0 of the texture (data row)
-		float2 dataUV = float2( sampleX, 0.005 );
-		float3 data = g_tGraphData.SampleLevel( g_sPointClamp, dataUV, 0 ).rgb;
+        float2 dataUV = float2(sampleX, 0.005);
+        float3 data = g_tGraphData.Sample(g_sTrilinearClamp, dataUV ).rgb;
 		if ( channel == 0 ) return data.r;
 		if ( channel == 1 ) return data.g;
 		return data.b;
@@ -102,15 +102,23 @@ PS
 		float prevLineY = bandTop + bandHeight * ( 1.0 - prevVal );
 
 		float thickness = 0.012;
+		float yAA = max( fwidth( uv.y ), 1e-5 );
 
 		// Horizontal segment at current value
-		float hLine = step( abs( uv.y - lineY ), thickness );
+		float hLine = smoothstep( thickness + yAA, thickness - yAA, abs( uv.y - lineY ) );
 
 		// Fill between previous and current value (vertical connector)
 		float minY = min( prevLineY, lineY );
 		float maxY = max( prevLineY, lineY );
 		float localX = frac( uv.x * sampleCount );
-		float vLine = step( localX, 0.12 ) * step( minY - thickness, uv.y ) * step( uv.y, maxY + thickness );
+
+		float xAA = max( fwidth( uv.x * sampleCount ), 1e-5 );
+		float xMask = smoothstep( -xAA, xAA, localX ) * ( 1.0 - smoothstep( 0.12 - xAA, 0.12 + xAA, localX ) );
+
+		float yMin = minY - thickness;
+		float yMax = maxY + thickness;
+		float yMask = smoothstep( yMin - yAA, yMin + yAA, uv.y ) * ( 1.0 - smoothstep( yMax - yAA, yMax + yAA, uv.y ) );
+		float vLine = xMask * yMask;
 
 		return max( hLine, vLine );
 	}
@@ -138,15 +146,22 @@ PS
 		float ch3 = DrawChannel( uv, 2, g_vBand3.x, g_vBand3.y, sampleCount );
 		lcd += g_vCh3Color.rgb * g_vCh3Color.a * ch3;
 
-		// Painted overlay from render target
-		float3 overlay = g_tSelfIllumMask.SampleLevel( g_sPointClamp, uv, 0 ).rgb;
-		lcd += overlay * 1.0;
+		// LCD pixelation effect
+        float2 lcdRes = float2(64, 48);
+        g_tSelfIllumMask.GetDimensions(lcdRes.x, lcdRes.y);
+        float2 cellUv = frac(uv * lcdRes);
+
+        float2 cellScreenSize = fwidth(uv * lcdRes);
+        float lcdFade = 1.0 - saturate(max(cellScreenSize.x, cellScreenSize.y) * 2.0);
+
+        // Painted overlay from render target
+        float3 overlay = g_tSelfIllumMask.Sample(g_sTrilinearClamp, uv).rgb;
+        float3 overlayPoint = g_tSelfIllumMask.Sample(g_sPointClamp, uv).rgb;
+
+		lcd += lerp( overlay, overlayPoint, lcdFade ) + 0.002;
 
 		// Save pre-LCD color for distance blending
 		float3 rawLcd = lcd;
-
-		float2 lcdRes = float2( 64, 48 );
-		float2 cellUv = frac( uv * lcdRes );
 
 		// Each pixel cell has 3 vertical RGB sub-pixel columns
 		float subX = cellUv.x * 3.0;
@@ -165,24 +180,19 @@ PS
 		subColor.b = ( subIdx == 2 ) ? 1.0 : 0.06;
 
 		// Apply LCD
-		lcd *= subColor * shape * 2.8;
-
-		// Faint backlight bleed visible in the gaps
-		lcd += 0.002;
+		lcd *= subColor * shape * 5.8;
 
 		// Fade out grid at distance
-		float2 cellScreenSize = fwidth( uv * lcdRes );
-		float lcdFade = 1.0 - saturate( max( cellScreenSize.x, cellScreenSize.y ) * 2.0 );
 		lcd = lerp( rawLcd, lcd, lcdFade );
 
 		float3 viewDir = normalize( g_vCameraPositionWs.xyz - ( i.vPositionWithOffsetWs.xyz + g_vHighPrecisionLightingOffsetWs.xyz ) );
 		float NdotV = saturate( dot( normalize( i.vNormalWs ), viewDir ) );
 
 		// Sharp falloff
-		float angleDim = pow( NdotV, 5.0 );
+		float angleDim = pow( NdotV, 10.0f );
 
 		// At extreme angles, colors wash out toward a dim bluish backlight tint
-		float3 washout = float3( 0.008, 0.008, 0.012 );
+		float3 washout = float3( 0.008, 0.008, 0.012 ) + ( float3( lcd.b, lcd.r, lcd.g ) * 0.05 );
 		lcd = lerp( washout, lcd, angleDim );
 
 		m.Albedo = Tex2DS( g_tColorMap, g_sSampler0, i.vTextureCoords.xy ).rgb;

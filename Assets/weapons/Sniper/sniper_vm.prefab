@@ -21,6 +21,7 @@
         "__enabled": true,
         "Flags": 0,
         "AnimationSpeed": 1,
+        "DeploySound": null,
         "EjectBrass": {
           "_type": "gameobject",
           "prefab": "weapons/common/effects/eject_rifle.prefab"
@@ -30,6 +31,9 @@
           "go": "a1b2c3d4-2223-4aaa-b223-222222222223"
         },
         "IncrementalAnimationSpeed": 3,
+        "IncrementalReloadFinishSounds": [],
+        "IncrementalReloadSoundEvents": [],
+        "IncrementalReloadStartSounds": [],
         "InertiaScale": "2,2",
         "IsIncremental": false,
         "IsThrowable": false,
@@ -47,7 +51,16 @@
         "OnComponentFixedUpdate": null,
         "OnComponentStart": null,
         "OnComponentUpdate": null,
-        "ReloadSoundEvents": [],
+        "ReloadSoundEvents": [
+          {
+            "Time": 0.3,
+            "Sound": "weapons/sniper/sounds/sniper_mag_out.sound"
+          },
+          {
+            "Time": 1.45,
+            "Sound": "weapons/sniper/sounds/sniper_mag_in.sound"
+          }
+        ],
         "Renderer": {
           "_type": "component",
           "component_id": "a1b2c3d4-2225-4aaa-b225-222222222225",
@@ -66,6 +79,8 @@
         "__guid": "a1b2c3d4-2228-4aaa-b228-222222222228",
         "__enabled": true,
         "Flags": 0,
+        "LowerAmount": 1.5,
+        "LowerSpeed": 4,
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,

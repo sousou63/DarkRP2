@@ -88,6 +88,8 @@ public partial class Npc : Component, IKillSource
 		if ( !Renderer.IsValid() )
 			return;
 
+		var batch = Scene.BatchGroup();
+
 		var go = new GameObject( true, "Ragdoll" );
 		go.Tags.Add( "ragdoll" );
 		go.WorldTransform = WorldTransform;
@@ -112,6 +114,8 @@ public partial class Npc : Component, IKillSource
 		var physics = go.Components.Create<ModelPhysics>();
 		physics.Model = mainBody.Model;
 		physics.Renderer = mainBody;
+		batch.Dispose();
+
 		physics.CopyBonesFrom( Renderer, true );
 
 		ApplyRagdollForce( physics, velocity, origin );
@@ -122,10 +126,8 @@ public partial class Npc : Component, IKillSource
 		mainBody.Invoke( duration, mainBody.DestroyGameObject );
 	}
 
-	async void ApplyRagdollForce( ModelPhysics physics, Vector3 force, Vector3 origin )
+	void ApplyRagdollForce( ModelPhysics physics, Vector3 force, Vector3 origin )
 	{
-		await GameTask.Delay( 10 );
-
 		if ( !physics.IsValid() ) return;
 		if ( force.Length < 1 ) return;
 

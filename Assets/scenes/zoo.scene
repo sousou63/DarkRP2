@@ -4386,7 +4386,7 @@
         "MovedObjects": []
       },
       "__PrefabIdToInstanceId": {
-        "0fbc0200-c9b5-4109-8b54-0adffc3f87db": "f8e2d3a6-3cc1-4d88-a825-4c0477400dc7"
+        "b606034f-1731-489b-b1c4-3fcdc2dceb21": "a9d3b3fb-00cf-416b-86c2-1f8584600e9e"
       }
     },
     {
@@ -5057,6 +5057,7 @@
           "OnComponentUpdate": null,
           "OverrideMassCenter": false,
           "RigidbodyFlags": 0,
+          "SleepThreshold": 2,
           "StartAsleep": false
         }
       ],
@@ -5183,6 +5184,7 @@
           "OnComponentUpdate": null,
           "OverrideMassCenter": false,
           "RigidbodyFlags": 0,
+          "SleepThreshold": 2,
           "StartAsleep": false
         }
       ],
@@ -5550,6 +5552,7 @@
               "OnComponentUpdate": null,
               "OverrideMassCenter": false,
               "RigidbodyFlags": 0,
+              "SleepThreshold": 2,
               "StartAsleep": false
             },
             {
@@ -6098,6 +6101,7 @@
                   "OnComponentUpdate": null,
                   "OverrideMassCenter": false,
                   "RigidbodyFlags": 0,
+                  "SleepThreshold": 2,
                   "StartAsleep": false
                 },
                 {
@@ -6281,6 +6285,7 @@
                   "OnComponentUpdate": null,
                   "OverrideMassCenter": false,
                   "RigidbodyFlags": 0,
+                  "SleepThreshold": 2,
                   "StartAsleep": false
                 },
                 {
@@ -6360,6 +6365,7 @@
                   "OnComponentUpdate": null,
                   "OverrideMassCenter": false,
                   "RigidbodyFlags": 0,
+                  "SleepThreshold": 2,
                   "StartAsleep": false
                 },
                 {
@@ -6516,6 +6522,7 @@
           "OnComponentUpdate": null,
           "OverrideMassCenter": false,
           "RigidbodyFlags": 0,
+          "SleepThreshold": 2,
           "StartAsleep": false
         }
       ],
@@ -6574,17 +6581,17 @@
       }
     },
     "GameObjectSystems": {
-      "Sandbox.SelectionSetsSystem": {
-        "Data": {
-          "SelectionSets": []
+      "Sandbox.Clutter.ClutterGridSystem": {
+        "Storage": {
+          "$blob": "00b7c556-042a-47e3-8be5-3f7cea795b48"
         }
       },
       "Sandbox.MovieMaker.MovieRecorderSystem": {
         "DisableClientRecording": false
       },
-      "Sandbox.Clutter.ClutterGridSystem": {
-        "Storage": {
-          "$blob": "00b7c556-042a-47e3-8be5-3f7cea795b48"
+      "Sandbox.SelectionSetsSystem": {
+        "Data": {
+          "SelectionSets": []
         }
       }
     }

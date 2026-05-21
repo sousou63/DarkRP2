@@ -1,3 +1,5 @@
+using System.Numerics;
+
 /// <summary>
 /// Direction to stack objects in.
 /// </summary>
@@ -343,6 +345,9 @@ public class StackerTool : ToolMode
 		// Recompute transforms server-side from synced properties
 		var transforms = ComputeStackTransforms( root );
 
+		// batch these spawns
+		using var x = Scene.BatchGroup();
+
 		var undo = Player.Undo.Create();
 		undo.Name = "Stack";
 		undo.Icon = "📚";
@@ -368,6 +373,7 @@ public class StackerTool : ToolMode
 				}
 			}
 
+			Ownable.Set( clone, Player.Network.Owner );
 			clone.NetworkSpawn( true, null );
 			undo.Add( clone );
 		}

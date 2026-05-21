@@ -45,6 +45,7 @@ public class ShotgunWeapon : IronSightsWeapon
 
 			var tr = Scene.Trace.Ray( eyeRay with { Forward = forward }, Bullet.Range )
 				.IgnoreGameObjectHierarchy( AimIgnoreRoot )
+				.WithCollisionRules( "bullet" )
 				.WithoutTags( "playercontroller" )
 				.Radius( Bullet.BulletRadius )
 				.UseHitboxes()

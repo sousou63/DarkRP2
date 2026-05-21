@@ -68,6 +68,7 @@
           "_type": "gameobject",
           "go": "f2b03477-4df4-42f1-871e-dcf03f16fd46"
         },
+        "FirstShellReloadTime": 0,
         "HoldType": "HoldItem",
         "IncrementalReloading": false,
         "ItemPrefab": {
@@ -83,6 +84,7 @@
         "OnComponentStart": null,
         "OnComponentUpdate": null,
         "ParentBone": "hold_R",
+        "ReloadStartTime": 0,
         "ReloadTime": 2.5,
         "ReserveAmmo": 0,
         "SecondaryInput": {
@@ -94,8 +96,8 @@
           "Action": null
         },
         "StartingAmmo": 0,
-        "UsesAmmo": true,
-        "UsesClips": true,
+        "UsesAmmo": false,
+        "UsesClips": false,
         "Value": 0,
         "ViewModelPrefab": null,
         "WorldModelPrefab": {
@@ -172,6 +174,7 @@
         "OnComponentUpdate": null,
         "OverrideMassCenter": false,
         "RigidbodyFlags": 0,
+        "SleepThreshold": 2,
         "StartAsleep": false
       }
     ],
